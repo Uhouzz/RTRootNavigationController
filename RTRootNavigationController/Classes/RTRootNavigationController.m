@@ -605,22 +605,27 @@ __attribute((overloadable)) static inline UIViewController *RTSafeWrapViewContro
     BOOL isRootVC = viewController == RTSafeUnwrapViewController(self.viewControllers.firstObject);
     BOOL hasSetLeftItem = viewController.navigationItem.leftBarButtonItem != nil;
     if (!isRootVC && !self.useSystemBackBarButtonItem && !hasSetLeftItem) {
-        if ([viewController respondsToSelector:@selector(rt_customBackItemWithTarget:action:)]) {
-            viewController.navigationItem.leftBarButtonItem = [viewController rt_customBackItemWithTarget:self
-                                                                                                   action:@selector(onBack:)];
-        }
-        else if ([viewController respondsToSelector:@selector(customBackItemWithTarget:action:)]) {
+        NSArray *leftItems = [viewController rt_customLeftBarButtonItems];
+        if (leftItems) {
+            viewController.navigationItem.leftBarButtonItems = leftItems;
+        }else{
+            if ([viewController respondsToSelector:@selector(rt_customBackItemWithTarget:action:)]) {
+                viewController.navigationItem.leftBarButtonItem = [viewController rt_customBackItemWithTarget:self
+                                                                                                       action:@selector(onBack:)];
+            }
+            else if ([viewController respondsToSelector:@selector(customBackItemWithTarget:action:)]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            viewController.navigationItem.leftBarButtonItem = [viewController customBackItemWithTarget:self
-                                                                                                action:@selector(onBack:)];
+                viewController.navigationItem.leftBarButtonItem = [viewController customBackItemWithTarget:self
+                                                                                                    action:@selector(onBack:)];
 #pragma clang diagnostic pop
-        }
-        else {
-            viewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Back", nil)
-                                                                                               style:UIBarButtonItemStylePlain
-                                                                                              target:self
-                                                                                              action:@selector(onBack:)];
+            }
+            else {
+                viewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Back", nil)
+                                                                                                   style:UIBarButtonItemStylePlain
+                                                                                                  target:self
+                                                                                                  action:@selector(onBack:)];
+            }
         }
     }
 }

@@ -36,7 +36,8 @@
  */
 - (UIBarButtonItem *)customBackItemWithTarget:(id)target action:(SEL)action DEPRECATED_MSG_ATTRIBUTE("use rt_customBackItemWithTarget:action: instead!");
 - (UIBarButtonItem *)rt_customBackItemWithTarget:(id)target action:(SEL)action;
-
+// 知己定义导航栏左边的视图
+- (NSArray <UIBarButtonItem *> *)rt_customLeftBarButtonItems;
 @end
 
 IB_DESIGNABLE
